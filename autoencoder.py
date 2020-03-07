@@ -12,7 +12,7 @@ mnist=input_data.read_data_sets('MNIST_data/',one_hot=False)
 
 # Parameters
 learning_rate=0.01
-training_epochs=5
+training_epochs=20
 batch_size=256
 display_step=1
 examples_to_show=10
@@ -82,13 +82,17 @@ with tf.Session() as sess:
         # Loop over all batches
         for i in range(total_batch):
             batch_xs, batch_ys=mnist.train.next_batch(batch_size)
-            _, c=sess.run(optimizer, feed_dict={X: batch_xs})
+            _, c=sess.run([optimizer, cost], feed_dict={X: batch_xs})
         # Display logs per epoch step
         if epoch%display_step==0:
-            print("Epoch: %04d" % (epoch+1),
-                  "cost= .9f" %c)
+            print("Epoch: %02d" % (epoch+1),
+                  "cost= %.9f" %c)
     print("Optimization Finished")
 
     encoder_decoder=sess.run(y_pred,feed_dict={X: mnist.test.images[:examples_to_show]})
-    f, a =plt.subplot(2, examples_to_show, figsize=(10,2))
+    f, a =plt.subplots(2, examples_to_show, figsize=(10,2))
+    for i in range(examples_to_show):
+        a[0][i].imshow(np.reshape(mnist.test.images[i], (28, 28)))
+        a[1][i].imshow(np.reshape(encoder_decoder[i], (28, 28)))
+    plt.show()
 
